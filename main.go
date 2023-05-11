@@ -15,12 +15,10 @@ const hostUrl string = "localhost:9090"
 func main() {
 
 	l := log.New(os.Stdout, "product-api", log.LstdFlags)
-	helloHandler := handlers.NewHello(l)
-	goodbyeHandler := handlers.NewGoodbye(l)
+	productsHandler := handlers.NewProducts(l)
 
 	sm := http.NewServeMux()
-	sm.Handle("/hello", helloHandler)
-	sm.Handle("/goodbye", goodbyeHandler)
+	sm.Handle("/products", productsHandler)
 
 	server := &http.Server{
 		Addr:         hostUrl,

@@ -16,11 +16,12 @@ func NewGoodbye(l *log.Logger) *Goodbye {
 }
 
 func (g *Goodbye) ServeHTTP(rw http.ResponseWriter, request *http.Request) {
-	g.l.Println("Goodbye microservice")
+	g.l.Println("Handle Goodbye request")
 
 	data, err := io.ReadAll(request.Body)
 	if err != nil {
-		http.Error(rw, "Error in service", http.StatusBadRequest)
+		g.l.Println("Error reading body")
+		http.Error(rw, "Unable to read request body", http.StatusBadRequest)
 		return
 	}
 

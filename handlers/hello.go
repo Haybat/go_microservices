@@ -16,11 +16,12 @@ func NewHello(l *log.Logger) *Hello {
 }
 
 func (h *Hello) ServeHTTP(rw http.ResponseWriter, request *http.Request) {
-	h.l.Println("Hello microservice.")
+	h.l.Println("Handle Hello request.")
 
 	data, err := io.ReadAll(request.Body)
 	if err != nil {
-		http.Error(rw, "Error in service", http.StatusBadRequest)
+		h.l.Println("Error reading body", err)
+		http.Error(rw, "Unable to read request body", http.StatusBadRequest)
 		return
 	}
 
