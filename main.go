@@ -1,31 +1,21 @@
 package main
 
 import (
-	"fmt"
-	"io"
+	"haybat.org/go_microservices/handlers"
 	"log"
 	"net/http"
+	"os"
 )
 
 const hostUrl string = "localhost:9090"
 
 func main() {
 
-	http.HandleFunc("/hello", func(responseWriter http.ResponseWriter, request *http.Request) {
-		log.Println("Hello microservice.")
+	l := log.New(os.Stdout, "product-api", log.LstdFlags)
+	helloHandler := handlers.NewHello(l)
 
-		data, err := io.ReadAll(request.Body)
-		if err != nil {
-			http.Error(responseWriter, "Error in service", http.StatusBadRequest)
-			return
-		}
+	sm := http.NewServeMux()
+	sm.Handle("/hello", helloHandler)
 
-		fmt.Fprintf(responseWriter, "Hello %s", data)
-	})
-
-	http.HandleFunc("/goodbye", func(responseWriter http.ResponseWriter, request *http.Request) {
-		log.Println("Goodbye go microservice.")
-	})
-
-	http.ListenAndServe(hostUrl, nil)
+	http.ListenAndServe(hostUrl, sm)
 }
