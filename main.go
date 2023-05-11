@@ -1,10 +1,12 @@
 package main
 
 import (
+	"context"
 	"haybat.org/go_microservices/handlers"
 	"log"
 	"net/http"
 	"os"
+	"os/signal"
 	"time"
 )
 
@@ -28,5 +30,20 @@ func main() {
 		WriteTimeout: 1 * time.Second,
 	}
 
-	server.ListenAndServe()
+	go func() {
+		err := server.ListenAndServe()
+		if err != nil {
+			l.Fatal(err)
+		}
+	}()
+
+	signalChan := make(chan os.Signal)
+	signal.Notify(signalChan, os.Interrupt)
+	signal.Notify(signalChan, os.Kill)
+
+	sig := <-signalChan
+	l.Println("Received terminate, shutting down! ", sig)
+
+	tc, _ := context.WithTimeout(context.Background(), 30*time.Second)
+	server.Shutdown(tc)
 }
