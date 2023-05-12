@@ -1,7 +1,6 @@
 package handlers
 
 import (
-	"encoding/json"
 	"haybat.org/go_microservices/data"
 	"log"
 	"net/http"
@@ -17,6 +16,15 @@ func NewProducts(l *log.Logger) *Products {
 
 func (p *Products) ServeHTTP(rw http.ResponseWriter, request *http.Request) {
 	productList := data.GetProducts()
+	err := productList.ToJSON(rw)
+	if err != nil {
+		http.Error(rw, "Unable to encode json", http.StatusInternalServerError)
+	}
+}
+
+/*
+func (p *Products) ServeHTTP(rw http.ResponseWriter, request *http.Request) {
+	productList := data.GetProducts()
 	data, err := json.Marshal(productList)
 	if err != nil {
 		http.Error(rw, "Unable to marshal json", http.StatusInternalServerError)
@@ -24,3 +32,4 @@ func (p *Products) ServeHTTP(rw http.ResponseWriter, request *http.Request) {
 
 	rw.Write(data)
 }
+*/
