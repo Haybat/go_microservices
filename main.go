@@ -10,18 +10,25 @@ import (
 	"time"
 )
 
-const hostUrl string = "localhost:9090"
+const bindAddress string = "localhost:9090"
 
 func main() {
 
 	l := log.New(os.Stdout, "product-api", log.LstdFlags)
+
+	// create handlers
+	helloHandler := handlers.NewHello(l)
+	goodbyeHandler := handlers.NewGoodbye(l)
 	productsHandler := handlers.NewProducts(l)
 
+	// create a new serve mux and register the handlers
 	sm := http.NewServeMux()
+	sm.Handle("/hello", helloHandler)
+	sm.Handle("/goodbye", goodbyeHandler)
 	sm.Handle("/products", productsHandler)
 
 	server := &http.Server{
-		Addr:         hostUrl,
+		Addr:         bindAddress,
 		Handler:      sm,
 		IdleTimeout:  120 * time.Second,
 		ReadTimeout:  1 * time.Second,
