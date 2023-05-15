@@ -19,13 +19,28 @@ type Product struct {
 
 type Products []*Product
 
+func GetProducts() Products {
+	return productList
+}
+
+func AddProduct(product *Product) {
+	product.ID = getNextId()
+	productList = append(productList, product)
+}
+
+func getNextId() int {
+	p := productList[len(productList)-1]
+	return p.ID + 1
+}
+
+func (p *Product) FromJSON(r io.Reader) error {
+	decoder := json.NewDecoder(r)
+	return decoder.Decode(p)
+}
+
 func (p *Products) ToJSON(w io.Writer) error {
 	encoder := json.NewEncoder(w)
 	return encoder.Encode(p)
-}
-
-func GetProducts() Products {
-	return productList
 }
 
 var productList = Products{
